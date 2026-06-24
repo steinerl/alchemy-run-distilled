@@ -16,6 +16,14 @@ import { type DefaultErrors } from "../errors.ts";
 // Errors
 // =============================================================================
 
+export class AiGatewaySpendingLimitDeprecated extends T.applyErrorMatchers(
+  Schema.TaggedErrorClass<AiGatewaySpendingLimitDeprecated>()(
+    "AiGatewaySpendingLimitDeprecated",
+    { code: Schema.Number, message: Schema.String },
+  ),
+  [{ message: { includes: "spending limits are deprecated" } }],
+) {}
+
 export class DatasetNameAlreadyExists extends T.applyErrorMatchers(
   Schema.TaggedErrorClass<DatasetNameAlreadyExists>()(
     "DatasetNameAlreadyExists",
@@ -4265,7 +4273,10 @@ export const CreateBillingSpendingLimitResponse =
     Schema.Unknown.pipe(T.ResponsePath("result")),
   ) as unknown as Schema.Schema<CreateBillingSpendingLimitResponse>;
 
-export type CreateBillingSpendingLimitError = DefaultErrors | NoManualTopup;
+export type CreateBillingSpendingLimitError =
+  | DefaultErrors
+  | NoManualTopup
+  | AiGatewaySpendingLimitDeprecated;
 
 export const createBillingSpendingLimit: API.OperationMethod<
   CreateBillingSpendingLimitRequest,
@@ -4275,7 +4286,7 @@ export const createBillingSpendingLimit: API.OperationMethod<
 > = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
   input: CreateBillingSpendingLimitRequest,
   output: CreateBillingSpendingLimitResponse,
-  errors: [NoManualTopup],
+  errors: [NoManualTopup, AiGatewaySpendingLimitDeprecated],
 }));
 
 export interface DeleteBillingSpendingLimitRequest {

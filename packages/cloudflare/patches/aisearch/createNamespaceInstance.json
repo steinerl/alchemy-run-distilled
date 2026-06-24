@@ -59,6 +59,14 @@
         }
       }
     ],
+    "MissingSitemap": [
+      {
+        "status": 400,
+        "message": {
+          "includes": "missing_sitemap"
+        }
+      }
+    ],
     "Forbidden": [
       {
         "status": 403

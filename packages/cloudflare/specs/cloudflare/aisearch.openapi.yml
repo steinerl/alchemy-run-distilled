@@ -6923,6 +6923,10 @@ paths:
           - status: 400
             message:
               includes: domain_not_owned_by_user
+        MissingSitemap:
+          - status: 400
+            message:
+              includes: missing_sitemap
         Forbidden:
           - status: 403
   /accounts/{account_id}/ai-search/namespaces/{name}/instances/{id}:

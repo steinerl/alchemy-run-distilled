@@ -202,6 +202,14 @@ export class VersionNotFound extends T.applyErrorMatchers(
   [{ code: 100146 }],
 ) {}
 
+export class WorkerHasNoVersions extends T.applyErrorMatchers(
+  Schema.TaggedErrorClass<WorkerHasNoVersions>()("WorkerHasNoVersions", {
+    code: Schema.Number,
+    message: Schema.String,
+  }),
+  [{ status: 404, message: { includes: "has no versions" } }],
+) {}
+
 export class WorkerNotFound extends T.applyErrorMatchers(
   Schema.TaggedErrorClass<WorkerNotFound>()("WorkerNotFound", {
     code: Schema.Number,
@@ -16864,7 +16872,8 @@ export const GetScriptScriptAndVersionSettingResponse =
 
 export type GetScriptScriptAndVersionSettingError =
   | DefaultErrors
-  | WorkerNotFound;
+  | WorkerNotFound
+  | WorkerHasNoVersions;
 
 export const getScriptScriptAndVersionSetting: API.OperationMethod<
   GetScriptScriptAndVersionSettingRequest,
@@ -16874,7 +16883,7 @@ export const getScriptScriptAndVersionSetting: API.OperationMethod<
 > = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
   input: GetScriptScriptAndVersionSettingRequest,
   output: GetScriptScriptAndVersionSettingResponse,
-  errors: [WorkerNotFound],
+  errors: [WorkerNotFound, WorkerHasNoVersions],
 }));
 
 export interface PatchScriptScriptAndVersionSettingRequest {

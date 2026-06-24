@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Cloudflare WORKERS API
+  title: Cloudflare Workers API
   version: 0.0.0
 servers:
   - url: https://api.cloudflare.com/client/v4
@@ -16238,6 +16238,10 @@ paths:
       x-distilled-errors:
         WorkerNotFound:
           - code: 10007
+        WorkerHasNoVersions:
+          - status: 404
+            message:
+              includes: has no versions
     patch:
       operationId: patchScriptScriptAndVersionSetting
       description: "Patch metadata or config, such as bindings or usage

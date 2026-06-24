@@ -60,6 +60,14 @@ export class InvalidTokenCredentials extends T.applyErrorMatchers(
   [{ code: 7012 }, { status: 400, message: { includes: "invalid_token" } }],
 ) {}
 
+export class MissingSitemap extends T.applyErrorMatchers(
+  Schema.TaggedErrorClass<MissingSitemap>()("MissingSitemap", {
+    code: Schema.Number,
+    message: Schema.String,
+  }),
+  [{ status: 400, message: { includes: "missing_sitemap" } }],
+) {}
+
 export class NamespaceAlreadyExists extends T.applyErrorMatchers(
   Schema.TaggedErrorClass<NamespaceAlreadyExists>()("NamespaceAlreadyExists", {
     code: Schema.Number,
@@ -10505,6 +10513,7 @@ export type CreateNamespaceInstanceError =
   | InstanceAlreadyExists
   | InvalidTokenCredentials
   | WebCrawlerDomainNotOwned
+  | MissingSitemap
   | Forbidden;
 
 export const createNamespaceInstance: API.OperationMethod<
@@ -10523,6 +10532,7 @@ export const createNamespaceInstance: API.OperationMethod<
     InstanceAlreadyExists,
     InvalidTokenCredentials,
     WebCrawlerDomainNotOwned,
+    MissingSitemap,
     Forbidden,
   ],
 }));
