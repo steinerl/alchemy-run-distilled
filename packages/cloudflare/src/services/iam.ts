@@ -32,6 +32,14 @@ export class InvalidMember extends T.applyErrorMatchers(
   [{ code: 400 }],
 ) {}
 
+export class PolicyValidationFailed extends T.applyErrorMatchers(
+  Schema.TaggedErrorClass<PolicyValidationFailed>()("PolicyValidationFailed", {
+    code: Schema.Number,
+    message: Schema.String,
+  }),
+  [{ status: 400, message: { includes: "Policy validation failed" } }],
+) {}
+
 export class ResourceGroupNotFound extends T.applyErrorMatchers(
   Schema.TaggedErrorClass<ResourceGroupNotFound>()("ResourceGroupNotFound", {
     code: Schema.Number,
@@ -3247,7 +3255,10 @@ export const ListUserGroupMembersResponse =
     }).pipe(Schema.encodeKeys({ result: "result", resultInfo: "result_info" })),
   ) as unknown as Schema.Schema<ListUserGroupMembersResponse>;
 
-export type ListUserGroupMembersError = DefaultErrors | UserGroupNotFound;
+export type ListUserGroupMembersError =
+  | DefaultErrors
+  | UserGroupNotFound
+  | PolicyValidationFailed;
 
 export const listUserGroupMembers: API.PaginatedOperationMethod<
   ListUserGroupMembersRequest,
@@ -3257,7 +3268,7 @@ export const listUserGroupMembers: API.PaginatedOperationMethod<
 > = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
   input: ListUserGroupMembersRequest,
   output: ListUserGroupMembersResponse,
-  errors: [UserGroupNotFound],
+  errors: [UserGroupNotFound, PolicyValidationFailed],
   pagination: {
     mode: "page",
     inputToken: "page",

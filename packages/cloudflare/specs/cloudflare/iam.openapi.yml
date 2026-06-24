@@ -2422,6 +2422,10 @@ paths:
           - code: 404
             message:
               includes: User group
+        PolicyValidationFailed:
+          - status: 400
+            message:
+              includes: Policy validation failed
     post:
       operationId: createUserGroupMember
       description: "Add members to a User Group.  @example ```ts // Automatically
