@@ -974,6 +974,20 @@ export const makeAPI = <Creds, RequestOptions = never>(
             responseBody = (responseBody as Record<string, unknown>).items;
           }
 
+          // Distinguish two very different decode failures:
+          //   1. NON-empty body that doesn't match the schema → a genuine
+          //      schema gap in the SDK. Surface as `ParseError` (NOT retryable)
+          //      so it gets patched (Typed Error Doctrine). Retrying it would
+          //      only mask the bug.
+          //   2. EMPTY / null body where a structured response was expected →
+          //      there is nothing to parse. This is a transient, incomplete
+          //      transport response (e.g. the edge answering a 2xx with a bare
+          //      `null`/empty body under load), NOT a schema bug. Surface it as
+          //      a retryable `TransportError` so the bounded retry policy
+          //      re-fetches the real body. (Void/204 and nullable-schema ops
+          //      decode an empty body successfully and never reach here.)
+          const bodyIsEmpty =
+            rawBody === null || rawBody === undefined || rawBody === "";
           return yield* Schema.decodeUnknownEffect(outputSchema)(
             responseBody,
           ).pipe(
@@ -989,7 +1003,20 @@ export const makeAPI = <Creds, RequestOptions = never>(
                       ),
                     ),
                   )
-                : Effect.fail(new config.ParseError({ body: rawBody, cause })),
+                : bodyIsEmpty
+                  ? Effect.fail(
+                      new HttpClientError.HttpClientError({
+                        reason: new HttpClientError.TransportError({
+                          request,
+                          cause,
+                          description:
+                            "Empty response body where a structured response was expected",
+                        }),
+                      }),
+                    )
+                  : Effect.fail(
+                      new config.ParseError({ body: rawBody, cause }),
+                    ),
             ),
           );
         });
