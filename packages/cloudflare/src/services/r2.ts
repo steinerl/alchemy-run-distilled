@@ -141,6 +141,14 @@ export class NoSuchBucket extends T.applyErrorMatchers(
   [{ code: 10006 }],
 ) {}
 
+export class NoSuchKey extends T.applyErrorMatchers(
+  Schema.TaggedErrorClass<NoSuchKey>()("NoSuchKey", {
+    code: Schema.Number,
+    message: Schema.String,
+  }),
+  [{ status: 404, message: { includes: "specified key does not exist" } }],
+) {}
+
 export class QueueNotFound extends T.applyErrorMatchers(
   Schema.TaggedErrorClass<QueueNotFound>()("QueueNotFound", {
     code: Schema.Number,
@@ -3475,7 +3483,10 @@ export type GetObjectError =
   | DefaultErrors
   | NoSuchBucket
   | InvalidRoute
-  | NoRoute;
+  | NoRoute
+  | NoSuchKey
+  | NoSuchBucket
+  | InvalidRoute;
 
 export const getObject: API.OperationMethod<
   GetObjectRequest,
@@ -3485,7 +3496,14 @@ export const getObject: API.OperationMethod<
 > = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
   input: GetObjectRequest,
   output: GetObjectResponse,
-  errors: [NoSuchBucket, InvalidRoute, NoRoute],
+  errors: [
+    NoSuchBucket,
+    InvalidRoute,
+    NoRoute,
+    NoSuchKey,
+    NoSuchBucket,
+    InvalidRoute,
+  ],
 }));
 
 export interface ListObjectsRequest {
