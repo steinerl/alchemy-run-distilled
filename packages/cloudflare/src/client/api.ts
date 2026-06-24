@@ -112,14 +112,21 @@ const GLOBAL_ERROR_CODE_MAP: Record<
   // globally keeps tests for unknown-resource cases off UnknownCloudflareError.
   7003: (message) => new InvalidRoute({ code: 7003, message }),
   // 1000: dual-use code. Cloudflare uses it for several unrelated conditions,
-  // but the "Request timeout" variant is unambiguous from the message and is
-  // a transient, retryable failure. Map only that variant to GatewayTimeout
-  // (retryable + server error); fall back to UnknownCloudflareError for
-  // anything else carried under code 1000 to preserve existing behavior.
-  1000: (message) =>
-    /\btimeout\b/i.test(message)
-      ? new GatewayTimeout({ message })
-      : new UnknownCloudflareError({ code: 1000, message }),
+  // each unambiguous from the message and each a transient, retryable server
+  // failure:
+  //   - "Request timeout"       -> GatewayTimeout
+  //   - "Internal Server Error" -> InternalServerError
+  // Fall back to UnknownCloudflareError for anything else carried under code
+  // 1000 to preserve existing behavior.
+  1000: (message) => {
+    if (/\btimeout\b/i.test(message)) {
+      return new GatewayTimeout({ message });
+    }
+    if (/internal (server )?error/i.test(message)) {
+      return new InternalServerError({ message });
+    }
+    return new UnknownCloudflareError({ code: 1000, message });
+  },
 };
 
 /**
