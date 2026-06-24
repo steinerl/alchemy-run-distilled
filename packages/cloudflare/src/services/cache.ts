@@ -43,6 +43,14 @@ export class SettingUnavailableForPlan extends T.applyErrorMatchers(
   ],
 ) {}
 
+export class Unauthorized extends T.applyErrorMatchers(
+  Schema.TaggedErrorClass<Unauthorized>()("Unauthorized", {
+    code: Schema.Number,
+    message: Schema.String,
+  }),
+  [{ status: 401 }],
+) {}
+
 export class VariantsNotConfigured extends T.applyErrorMatchers(
   Schema.TaggedErrorClass<VariantsNotConfigured>()("VariantsNotConfigured", {
     code: Schema.Number,
@@ -1022,7 +1030,8 @@ export const GetRegionalTieredCacheResponse =
 export type GetRegionalTieredCacheError =
   | DefaultErrors
   | SettingUnavailableForPlan
-  | Forbidden;
+  | Forbidden
+  | Unauthorized;
 
 export const getRegionalTieredCache: API.OperationMethod<
   GetRegionalTieredCacheRequest,
@@ -1032,7 +1041,7 @@ export const getRegionalTieredCache: API.OperationMethod<
 > = /*@__PURE__*/ /*#__PURE__*/ API.make(() => ({
   input: GetRegionalTieredCacheRequest,
   output: GetRegionalTieredCacheResponse,
-  errors: [SettingUnavailableForPlan, Forbidden],
+  errors: [SettingUnavailableForPlan, Forbidden, Unauthorized],
 }));
 
 export interface PatchRegionalTieredCacheRequest {

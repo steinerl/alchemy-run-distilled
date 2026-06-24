@@ -940,6 +940,8 @@ paths:
               includes: not available for your plan
         Forbidden:
           - status: 403
+        Unauthorized:
+          - status: 401
     patch:
       operationId: patchRegionalTieredCache
       description: "Instructs Cloudflare to check a regional hub data center on the

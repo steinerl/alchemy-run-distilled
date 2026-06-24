@@ -5135,7 +5135,7 @@ export const ListUserSchemasResponse =
     }).pipe(Schema.encodeKeys({ result: "result", resultInfo: "result_info" })),
   ) as unknown as Schema.Schema<ListUserSchemasResponse>;
 
-export type ListUserSchemasError = DefaultErrors | Forbidden;
+export type ListUserSchemasError = DefaultErrors | ZonePurged | Forbidden;
 
 export const listUserSchemas: API.PaginatedOperationMethod<
   ListUserSchemasRequest,
@@ -5145,7 +5145,7 @@ export const listUserSchemas: API.PaginatedOperationMethod<
 > = /*@__PURE__*/ /*#__PURE__*/ API.makePaginated(() => ({
   input: ListUserSchemasRequest,
   output: ListUserSchemasResponse,
-  errors: [Forbidden],
+  errors: [ZonePurged, Forbidden],
   pagination: {
     mode: "page",
     inputToken: "page",

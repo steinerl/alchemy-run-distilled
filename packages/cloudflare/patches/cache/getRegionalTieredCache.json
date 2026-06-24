@@ -3,6 +3,7 @@
     "SettingUnavailableForPlan": [
       { "code": 1135, "message": { "includes": "not available for your plan" } }
     ],
-    "Forbidden": [{ "status": 403 }]
+    "Forbidden": [{ "status": 403 }],
+    "Unauthorized": [{ "status": 401 }]
   }
 }
