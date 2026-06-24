@@ -244,8 +244,13 @@ function renderEnumLiterals(
   type: string | undefined,
 ): string {
   const isNumeric = type === "integer" || type === "number";
+  const isBoolean = type === "boolean";
   const literals = values
-    .map((v) => (isNumeric ? String(v) : `"${escapeStringLiteral(String(v))}"`))
+    .map((v) =>
+      isBoolean || isNumeric
+        ? String(v)
+        : `"${escapeStringLiteral(String(v))}"`,
+    )
     .join(", ");
   return `Schema.Literals([${literals}])`;
 }
